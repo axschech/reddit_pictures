@@ -14,41 +14,84 @@ Notes:
  	Straus Auto, Awful Waffle
  	(Please don't sue me)
  reddit.com
+ github.com/axschech/reddit_pictures
 
 -->
 <head>
 <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+<script src="http://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
+
+
 <script type="text/javascript">
-	
+	$(function() {
+	    $( "#dialog-confirm" ).dialog({
+	      resizable: false,
+	      height:500,
+	      width:400,
+	      modal: true,
+	      buttons: {
+	        "Okay": function() {
+	        	setAudio();
+	        	doWork();
+	          $( this ).dialog( "close" );
+	        },
+	        Cancel: function() {
+	        	setAudio(nope=true);
+	        	$('#icon').attr('src','images/mute.png');
+	        	doWork();
+	          $( this ).dialog( "close" );
+	        }
+	      }
+	    });
+	  });
 	var repeater;
 	var previous_subreddit='';
 	var pass;
 	
-	$(document).ready(function()
+	function setAudio(nope)
 	{
-
 		var songs = ['under_pressure','feels_so_good','more_than_feeling'];
 		var length = songs.length;
-		var song = 'audio/'+songs[Math.floor((Math.random()*length)+0)];
+		if(nope !== true)
+		{
+			var song = 'audio/'+songs[Math.floor((Math.random()*length)+0)];
+		}
+		else if(nope == true)
+		{
+			var song = '';
+		}
 		var source = '<audio autoplay id="mus">';
 	    //source +=  '<source id="audio_player_ogv" src="' + new_audio + '.ogv"  type="audio/ogg" />';
 	    source +=  '<source id="mu" src="' + song + '.mp3"  type="audio/mpeg" />';
 	    source +=  '</audio>';
 	    $('#music').html(source);
+	}
 
-
+	$(document).ready(function()
+	{
+	
 	    $('#img_click').click(function(){
-	    	if($('#icon').attr('src') == 'images/on.png')
+	    	if($('#icon').attr('src') == 'images/mute.png')
+	    	{
+	    		console.log('here');
+	    		$('#icon').attr('src','images/on.png');
+	    		setAudio();
+	    	}
+	    	else if($('#icon').attr('src') == 'images/on.png')
 	    	{
 	    		$('#mus').prop('muted',true);
 	    		$('#icon').attr('src','images/off.png');
 	    	}
-	    	else
+	    	else if($('#icon').attr('src') == 'images/off.png')
 	    	{
-	    		$('#mus').prop('muted',false);
+	    		
 	    		$('#icon').attr('src','images/on.png');
+	    		$('#mus').prop('muted',false);
 	    	}
 	    	
+	    	console.log($('#icon').attr('src'));
 	    });
 
 
@@ -74,7 +117,7 @@ Notes:
 				$(this).html('Go fullscreen?');
 			}
 		});
-		doWork();
+		
  
 	});
 
@@ -232,5 +275,14 @@ body
 <div id="wait" style="text-align:center"><img src="http://pimphop.com/wp-content/uploads/please-wait-animated-white.gif" /></div>
 <div id="music"></div>
 <div id="img_click"><img id="icon" src="images/on.png"></div>
+<div id="dialog-confirm" title="Empty the recycle bin?">
+  <p>This page runs best in <a href="http://google.com/chrome" target="_blank">Google Chrome</a></p>
+  <br />
+  <p>This website features autoplay. </p> 
+  <p> Select cancel to prevent sound from playing. Press okay to hear beautiful music!</p>
+  <br />
+  <p>Also, move your mouse to the top left corner of the window to use "fullscreen mode"</p>
+</div>
+ 
 </body>
 </html>
