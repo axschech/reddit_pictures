@@ -18,6 +18,7 @@ Notes:
 
 -->
 <head>
+<title>Please wait</title>
 <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
 <script src="http://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
 
@@ -25,9 +26,12 @@ Notes:
 
 
 <script type="text/javascript">
+//get jquery ui dialog ////
 	$(function() {
 	    $( "#dialog-confirm" ).dialog({
 	      resizable: false,
+	      draggable: false,
+	      closeOnEscape: false,
 	      height:500,
 	      width:400,
 	      modal: true,
@@ -46,6 +50,8 @@ Notes:
 	      }
 	    });
 	  });
+//////////////////////////
+
 	var repeater;
 	var previous_subreddit='';
 	var pass;
@@ -71,7 +77,19 @@ Notes:
 
 	$(document).ready(function()
 	{
-	
+		$('div#dialog-confirm').bind('dialogclose', function(event) {
+			var check = $('#storage').prop('checked');
+			if(check)
+			{
+				localStorage.clear();
+				console.log('cleared storage');
+			}
+			else
+			{
+				console.log('did not clear storage');
+			}
+			
+		});
 	    $('#img_click').click(function(){
 	    	if($('#icon').attr('src') == 'images/mute.png')
 	    	{
@@ -138,7 +156,48 @@ function reddit_test()
 			'FractalPorn',
 			'FoodPorn',
 			'CityPorn',
-			'AdrenalinePorn'
+			'AdrenalinePorn',
+			'ArchitecturePorn',
+			'AutumnPorn',
+			'avporn',
+			'boatporn',
+			'BonsaiPorn',
+			'BotanicalPorncarporn',
+			'churchporn',
+			'CityPorn',
+			'ClimbingPorn',
+			'ComicBookPorn',
+			'ConcertPorn',
+			'CulinaryPorn',
+			'desertporn',
+			'DesignPorn',
+			'DessertPorn',
+			'DestructionPorn',
+			'EarthPorn',
+			'F1Porn',
+			'FirePorn',
+			'futureporn',
+			'GamerPorn',
+			'GeekPorn',
+			'geologyporn',
+			'HistoryPorn',
+			'Houseporn',
+			'InfrastructurePorn',
+			'InstrumentPorn',
+			'MachinePorn',
+			'MacroPorn',
+			'MotorcyclePorn',
+			'MoviePosterPorn',
+			'RidesPorn',
+			'RoomPorn',
+			'ruralporn',
+			'seaporn',
+			'SkyPorn',
+			'stadiumporn',
+			'StreetArtPorn',
+			'waterporn',
+			'WeatherPorn',
+			'winterporn'
 		]
 
 		var r_count = subreddits.length;
@@ -248,7 +307,7 @@ function doWork()
 {
 
  reddit_test();
- repeater = setTimeout(doWork, 30000);
+ repeater = setTimeout(doWork, 60000);
 }
 
 </script>
@@ -267,6 +326,11 @@ body
 	height:20px;
 	background-color: white;
 }
+
+.ui-dialog-titlebar-close 
+{
+  visibility: hidden;
+}
 </style>
 </head>
 <body>
@@ -279,9 +343,10 @@ body
   <p>This page runs best in <a href="http://google.com/chrome" target="_blank">Google Chrome</a></p>
   <br />
   <p>This website features autoplay. </p> 
-  <p> Select cancel to prevent sound from playing. Press okay to hear beautiful music!</p>
+  <p> Select cancel to prevent sound from playing. Press okay to hear music!</p>
   <br />
   <p>Also, move your mouse to the top left corner of the window to use "fullscreen mode"</p>
+ <div title="This site uses LocalStorage to keep track of pictures that have been shown"> <input id="storage" type="checkbox"><a href="" target="_blank"> Clear <u>Local Storage?</u> </a></div>
 </div>
  
 </body>
