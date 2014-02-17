@@ -11,7 +11,6 @@ Notes:
  	Feels So Good, Chuck Mangione
  	Under Pressure, Queen / David Bowie
  	More Than a Feeling, Boston
- 	Straus Auto, Awful Waffle
  	(Please don't sue me)
  reddit.com
  github.com/axschech/reddit_pictures
@@ -162,7 +161,8 @@ function reddit_test()
 			'avporn',
 			'boatporn',
 			'BonsaiPorn',
-			'BotanicalPorncarporn',
+			'BotanicalPorn',
+			'carporn',
 			'churchporn',
 			'CityPorn',
 			'ClimbingPorn',
@@ -339,14 +339,14 @@ body
 <div id="wait" style="text-align:center"><img src="http://pimphop.com/wp-content/uploads/please-wait-animated-white.gif" /></div>
 <div id="music"></div>
 <div id="img_click"><img id="icon" src="images/on.png"></div>
-<div id="dialog-confirm" title="Empty the recycle bin?">
+<div id="dialog-confirm" title="Hold on there Jethro!">
   <p>This page runs best in <a href="http://google.com/chrome" target="_blank">Google Chrome</a></p>
   <br />
-  <p>This website features autoplay. </p> 
-  <p> Select cancel to prevent sound from playing. Press okay to hear music!</p>
-  <br />
+  <p>This website features <b>autoplay</b>. </p> 
+  <p> Select <b>cancel</b> to <b>prevent</b> sound from playing. Press okay to hear music!</p>
+
   <p>Also, move your mouse to the top left corner of the window to use "fullscreen mode"</p>
- <div title="This site uses LocalStorage to keep track of pictures that have been shown"> <input id="storage" type="checkbox"><a href="" target="_blank"> Clear <u>Local Storage?</u> </a></div>
+ <div title="This site uses LocalStorage to keep track of pictures that have been shown"> <input id="storage" type="checkbox"><a href="http://www.html5rocks.com/en/features/storage" target="_blank"> Clear <u>Local Storage?</u> </a></div>
 </div>
  
 </body>
