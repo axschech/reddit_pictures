@@ -22,33 +22,39 @@ Notes:
 <script src="http://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
 
 <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
+<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css">
 
+<!-- Latest compiled and minified JavaScript -->
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
 
 <script type="text/javascript">
+
+
+
 //get jquery ui dialog ////
-	$(function() {
-	    $( "#dialog-confirm" ).dialog({
-	      resizable: false,
-	      draggable: false,
-	      closeOnEscape: false,
-	      height:500,
-	      width:400,
-	      modal: true,
-	      buttons: {
-	        "Okay": function() {
-	        	setAudio();
-	        	doWork();
-	          $( this ).dialog( "close" );
-	        },
-	        Cancel: function() {
-	        	setAudio(nope=true);
-	        	$('#icon').attr('src','images/mute.png');
-	        	doWork();
-	          $( this ).dialog( "close" );
-	        }
-	      }
-	    });
-	  });
+	// $(function() {
+	//     $( "#dialog-confirm" ).dialog({
+	//       resizable: false,
+	//       draggable: false,
+	//       closeOnEscape: false,
+	//       height:500,
+	//       width:400,
+	//       modal: true,
+	//       buttons: {
+	//         "Okay": function() {
+	//         	setAudio();
+	//         	doWork();
+	//           $( this ).dialog( "close" );
+	//         },
+	//         Cancel: function() {
+	//         	setAudio(nope=true);
+	//         	$('#icon').attr('src','images/mute.png');
+	//         	doWork();
+	//           $( this ).dialog( "close" );
+	//         }
+	//       }
+	//     });
+	//   });
 //////////////////////////
 
 	var repeater;
@@ -76,7 +82,9 @@ Notes:
 
 	$(document).ready(function()
 	{
-		$('div#dialog-confirm').bind('dialogclose', function(event) {
+		$('#myModal').modal();
+		$('#mkay').click(function() {
+			console.log('button clicked');
 			var check = $('#storage').prop('checked');
 			if(check)
 			{
@@ -87,8 +95,36 @@ Notes:
 			{
 				console.log('did not clear storage');
 			}
-			
+
+			var play = $('#autoplay').prop('checked');
+
+			if(play)
+			{
+				setAudio();
+	        	doWork();
+			}
+			else
+			{
+				setAudio(nope=true);
+		    	$('#icon').attr('src','images/mute.png');
+		    	doWork();
+			}
+			$('#myModal').modal('hide');
 		});
+
+		// $('div#dialog-confirm').bind('dialogclose', function(event) {
+		// 	var check = $('#storage').prop('checked');
+		// 	if(check)
+		// 	{
+		// 		localStorage.clear();
+		// 		console.log('cleared storage');
+		// 	}
+		// 	else
+		// 	{
+		// 		console.log('did not clear storage');
+		// 	}
+			
+		// });
 	    $('#img_click').click(function(){
 	    	if($('#icon').attr('src') == 'images/mute.png')
 	    	{
@@ -206,19 +242,21 @@ function reddit_test()
 		var prepend = 'i.';
 
 		$.ajax({
-		url: 'http://www.reddit.com/r/'+subreddit+'/hot.json',
+		url: 'http://www.reddit.com/r/'+subreddit+'/hot.json?limit=100',
 		success: function (data)
 		{
+			$('#text').fadeOut();
 
 			var Data = data.data.children;
 			var x = Data.length;
 			var y = Math.floor((Math.random()*x)+0);
 			var img = Data[y].data.url;
+			var title = Data[y].data.title;
 			var returnedImg;
 			console.log(img);
 			returnedImg = getImage(img);
 			console.log(returnedImg);
-			setImage(returnedImg,subreddit);
+			setImage(returnedImg,subreddit,title);
 			
 		}
 
@@ -258,7 +296,7 @@ function getImage(img)
 	}
 }
 
-function setImage(img,sub)
+function setImage(img,sub,t)
 {
 	var str;
 
@@ -273,6 +311,9 @@ function setImage(img,sub)
 			$('body').css('background-image', 'url('+img+')')
 			localStorage[img] = true;
 			document.title = sub;
+			$('#text').html(t);
+			$('#text').fadeIn('slow');
+			setTimeout(function() { $('#text').fadeOut('slow'); }, 10000);
 		}
 		else
 		{
@@ -337,9 +378,38 @@ body
 <div id="hover" style="position:absolute;top:0;left:0;width:200px;height:200px;"><button id="fullscreen">Go fullscreen?</button></div>
 <img id="dat_img" />
 <div id="wait" style="text-align:center"><img src="http://pimphop.com/wp-content/uploads/please-wait-animated-white.gif" /></div>
+<div id="text" style="z-index:100; background-color:white; text-align:center; font-size:20px; width:300px; margin:0 auto; border-radius: 10px;"></div>
 <div id="music"></div>
 <div id="img_click"><img id="icon" src="images/on.png"></div>
-<div id="dialog-confirm" title="Hold on there Jethro!">
+
+
+<div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+	  	<div class="modal-header">
+	    	<h4 class="modal-title">Hold on there, Jethro!</h4>
+	  	</div>
+		<div class="modal-body">
+	     <p>This page runs best in <a href="http://google.com/chrome" target="_blank">Google Chrome</a></p>
+		  <br />
+			  <p>This website features <b>autoplay</b>. </p> 
+			  <p> Select <b>cancel</b> to <b>prevent</b> sound from playing. Press okay to hear music!</p>
+
+			  <p>Also, move your mouse to the top left corner of the window to use "fullscreen mode"</p>
+			 <input id="autoplay" type="checkbox"> Allow autoplay?</input>
+			 <br />
+			 <div title="This site uses LocalStorage to keep track of pictures that have been shown">
+		  		<input id="storage" type="checkbox"> Clear <a href="http://www.html5rocks.com/en/features/storage" target="_blank"> <u>Local Storage?</u> </a>
+	 		 </div>
+		</div>
+		<div class="modal-footer">
+			<button id="mkay" type="button" class="btn btn-primary">Okay</button> 
+		</div>
+  </div>
+</div>
+
+
+<!-- <div id="dialog-confirm" title="Hold on there Jethro!">
   <p>This page runs best in <a href="http://google.com/chrome" target="_blank">Google Chrome</a></p>
   <br />
   <p>This website features <b>autoplay</b>. </p> 
@@ -347,7 +417,7 @@ body
 
   <p>Also, move your mouse to the top left corner of the window to use "fullscreen mode"</p>
  <div title="This site uses LocalStorage to keep track of pictures that have been shown"> <input id="storage" type="checkbox"><a href="http://www.html5rocks.com/en/features/storage" target="_blank"> Clear <u>Local Storage?</u> </a></div>
-</div>
+</div> -->
  
 </body>
 </html>
