@@ -8,12 +8,12 @@ Notes:
  Programmed for Google Chrome. please use it for the best experience:
  	http://google.com/chrome
  Music Credits:
- 	Feels So Good, Chuck Mangione
- 	Under Pressure, Queen / David Bowie
- 	More Than a Feeling, Boston
- 	(Please don't sue me)
- reddit.com
- github.com/axschech/reddit_pictures
+ 	8tracks! | http://8tracks.com | http://8tracks.com/developers/
+
+ reddit: http://reddit.com
+ imgur: http://imgur.com
+
+ source: http://github.com/axschech/reddit_pictures
 
 -->
 <head>
@@ -31,57 +31,115 @@ Notes:
 
 
 
-//get jquery ui dialog ////
-	// $(function() {
-	//     $( "#dialog-confirm" ).dialog({
-	//       resizable: false,
-	//       draggable: false,
-	//       closeOnEscape: false,
-	//       height:500,
-	//       width:400,
-	//       modal: true,
-	//       buttons: {
-	//         "Okay": function() {
-	//         	setAudio();
-	//         	doWork();
-	//           $( this ).dialog( "close" );
-	//         },
-	//         Cancel: function() {
-	//         	setAudio(nope=true);
-	//         	$('#icon').attr('src','images/mute.png');
-	//         	doWork();
-	//           $( this ).dialog( "close" );
-	//         }
-	//       }
-	//     });
-	//   });
-//////////////////////////
-
 	var repeater;
 	var previous_subreddit='';
 	var pass;
-	
+
+
 	function setAudio(nope)
 	{
-		var songs = ['under_pressure','feels_so_good','more_than_feeling'];
-		var length = songs.length;
-		if(nope !== true)
+		var song='';
+		if(nope!==true)
 		{
-			var song = 'audio/'+songs[Math.floor((Math.random()*length)+0)];
+			var choices = ['classical','trance','jazz'];
+			var dat = Math.floor((Math.random()*choices.length)+0);
+			var choice = choices[dat];
+			var id;
+			var link = 'http://8tracks.com/mix_sets/tags:'+choice+':all:popular?format=json&api_key=ecd347469947fd49f56fa0f6adffdf0e78880776&per_page=100';
+			console.log(link);
+			var token;
+			var new_link;
+
+			// $.ajax({
+			// 			url:curl http://8tracks.com/sets/new.json
+			$.ajax({
+				url: 'http://8tracks.com/sets/new.json&api_key=ecd347469947fd49f56fa0f6adffdf0e78880776',
+				success: function(data)
+				{
+					token = data.play_token;
+		
+				}
+			}).done(function()
+			{
+				$.ajax({
+						url: link,
+						success: function (data) {
+							
+							var length = data.mixes.length;
+							var num = Math.floor((Math.random()*length)+0);
+							id = data.mixes[num].id;
+							new_link = 'http://8tracks.com/sets/'+token+'/play.json?mix_id='+id+'&api_key=ecd347469947fd49f56fa0f6adffdf0e78880776';
+							
+						}
+					}).done(function(){
+						$.ajax({
+							url:new_link,
+							success: function(data) {
+								song = data.set.track.url;
+								var source = '<audio autoplay id="mus">';
+							    //source +=  '<source id="audio_player_ogv" src="' + new_audio + '.ogv"  type="audio/ogg" />';
+							    source +=  '<source id="mu" src="'+song+'"  type="audio/mpeg" />';
+							    source +=  '</audio>';
+							    $('#music').html(source);
+
+
+							    $('#mus').bind('ended', function(){
+							    // done playing
+							     setAudio();
+							    });
+							},
+							error: function() {
+								//console.log(new_link);
+							}	
+
+						});
+					});			
+			});
+		
+		
 		}
-		else if(nope == true)
+		else
 		{
-			var song = '';
+			var source = '<audio autoplay id="mus">';
+		    //source +=  '<source id="audio_player_ogv" src="' + new_audio + '.ogv"  type="audio/ogg" />';
+		    source +=  '<source id="mu" src=""  type="audio/mpeg" />';
+		    source +=  '</audio>';
+		    $('#music').html(source);
 		}
-		var source = '<audio autoplay id="mus">';
-	    //source +=  '<source id="audio_player_ogv" src="' + new_audio + '.ogv"  type="audio/ogg" />';
-	    source +=  '<source id="mu" src="' + song + '.mp3"  type="audio/mpeg" />';
-	    source +=  '</audio>';
-	    $('#music').html(source);
-	}
+
+			
+	}				
+					
 
 	$(document).ready(function()
 	{
+		
+
+		$(document).keyup(function(e)
+		{
+			if(e.keyCode==32)
+			{
+				var music = $('#mus').prop('paused');
+				var m = document.getElementById('mus');
+				console.log(music);
+				console.log(typeof music);
+				if(music == false)
+				{
+					m.pause();
+				}
+				else
+				{
+					m.play();
+				}
+				//console.log('got it!');
+			}
+			else if(e.keyCode==78)
+			{
+				setAudio();
+			}
+		});
+
+		
 		$('#myModal').modal();
 		$('#mkay').click(function() {
 			console.log('button clicked');
@@ -221,7 +279,6 @@ function reddit_test()
 			'InfrastructurePorn',
 			'InstrumentPorn',
 			'MachinePorn',
-			'MacroPorn',
 			'MotorcyclePorn',
 			'MoviePosterPorn',
 			'RidesPorn',
@@ -365,6 +422,7 @@ body
 	right:10px;
 	width:20px;
 	height:20px;
+	border-radius:25px;
 	background-color: white;
 }
 
@@ -392,11 +450,11 @@ body
 		<div class="modal-body">
 	     <p>This page runs best in <a href="http://google.com/chrome" target="_blank">Google Chrome</a></p>
 		  <br />
-			  <p>This website features <b>autoplay</b>. </p> 
+			  <p>This website features <b>autoplay</b>, with music provided by <a href="http://8tracks.com" target="_blank">8tracks</a></p> 
 			  <p> Select <b>cancel</b> to <b>prevent</b> sound from playing. Press okay to hear music!</p>
 
 			  <p>Also, move your mouse to the top left corner of the window to use "fullscreen mode"</p>
-			 <input id="autoplay" type="checkbox"> Allow autoplay?</input>
+			 <input id="autoplay" type="checkbox"> Allow autoplay?</input> <b>(recommended)</b>
 			 <br />
 			 <div title="This site uses LocalStorage to keep track of pictures that have been shown">
 		  		<input id="storage" type="checkbox"> Clear <a href="http://www.html5rocks.com/en/features/storage" target="_blank"> <u>Local Storage?</u> </a>
