@@ -45,6 +45,7 @@ Notes:
 			var dat = Math.floor((Math.random()*choices.length)+0);
 			var choice = choices[dat];
 			var id;
+			var track_id;
 			var link = 'http://8tracks.com/mix_sets/tags:'+choice+':all:popular?format=json&api_key=ecd347469947fd49f56fa0f6adffdf0e78880776&per_page=100';
 			console.log(link);
 			var token;
@@ -76,12 +77,29 @@ Notes:
 							url:new_link,
 							success: function(data) {
 								song = data.set.track.url;
+								track_id = data.set.track.id;
 								var source = '<audio autoplay id="mus">';
 							    //source +=  '<source id="audio_player_ogv" src="' + new_audio + '.ogv"  type="audio/ogg" />';
 							    source +=  '<source id="mu" src="'+song+'"  type="audio/mpeg" />';
 							    source +=  '</audio>';
 							    $('#music').html(source);
 
+							    $('#mus').bind('timeupdate', function(){
+							    	console.log(this.currentTime);
+							    	if(this.currentTime>30)
+							    	{
+							    		var report = 'http://8tracks.com/sets/111696185/report.json?track_id='+track_id+'&mix_id='+id+'&api_key=ecd347469947fd49f56fa0f6adffdf0e78880776';
+							    		$.ajax({
+							    			url:report,
+							    			success : function (data) {
+
+
+							    				console.log(data);
+							    				$('#mus').unbind('timeupdate');
+							    			}
+							    		});
+							    	}
+							    });
 
 							    $('#mus').bind('ended', function(){
 							    // done playing
@@ -442,12 +460,14 @@ body
 
 
 <div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-sm">
+  <div class="modal-dialog modal-md">
     <div class="modal-content">
 	  	<div class="modal-header">
-	    	<h4 class="modal-title">Hold on there, Jethro!</h4>
+	    	<h4 class="modal-title"><div style="width:80%";>Hold on there, Jethro! <span style="float:right;">Keyboard Shortcuts:</span></div> </h4>
 	  	</div>
 		<div class="modal-body">
+		<div class="container" style="padding:0px">
+		<div class="col-md-3" style="padding:0px">
 	     <p>This page runs best in <a href="http://google.com/chrome" target="_blank">Google Chrome</a></p>
 		  <br />
 			  <p>This website features <b>autoplay</b>, with music provided by <a href="http://8tracks.com" target="_blank">8tracks</a></p> 
@@ -459,6 +479,13 @@ body
 			 <div title="This site uses LocalStorage to keep track of pictures that have been shown">
 		  		<input id="storage" type="checkbox"> Clear <a href="http://www.html5rocks.com/en/features/storage" target="_blank"> <u>Local Storage?</u> </a>
 	 		 </div>
+	 	</div>
+	 	<div class="col-md-3" style="padding:0">
+	 		Space: Pause <br /><br />
+	 		N: Next	<br /><br />
+	 		More coming soon! <br /><br />
+	 	</div>
+	 	</div>
 		</div>
 		<div class="modal-footer">
 			<button id="mkay" type="button" class="btn btn-primary">Okay</button> 
