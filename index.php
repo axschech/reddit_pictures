@@ -26,6 +26,8 @@ Notes:
 
 <!-- Latest compiled and minified JavaScript -->
 <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
+<script src="https://www.gstatic.com/cv/js/sender/v1/cast_sender.js"></script>
+<script src="js/cast_support.js"></script>
 
 <script type="text/javascript">
 
@@ -380,7 +382,7 @@ function setImage(img,sub,t)
 		var w = this.width;
 		var h = this.height;
 		console.log(h);
-		if(h>=1920 && img != 'undefined' && localStorage[img]==undefined)
+		if(h>=1920 && w>=1080 && img != 'undefined' && localStorage[img]==undefined)
 		{
 			$('#wait').hide();
 			$('body').css('background-image', 'url('+img+')')
@@ -435,12 +437,20 @@ body
 
 #icon
 {
+	position: relative;
+	width:20px;
+	height:20px;
+	margin:5px;
+}
+
+.img_click
+{
+	padding:5px;
 	position:absolute;
 	top:10px;
 	right:10px;
-	width:20px;
-	height:20px;
-	border-radius:25px;
+	width:30px;
+	height:30px;
 	background-color: white;
 }
 
@@ -451,12 +461,12 @@ body
 </style>
 </head>
 <body>
-<div id="hover" style="position:absolute;top:0;left:0;width:200px;height:200px;"><button id="fullscreen">Go fullscreen?</button></div>
+<div id="hover" style="position:absolute;top:0;left:0;width:200px;height:200px;"><button id="fullscreen" class="btn btn-lg btn-primary" style="margin:15px">Go fullscreen?</button></div>
 <img id="dat_img" />
 <div id="wait" style="text-align:center"><img src="http://pimphop.com/wp-content/uploads/please-wait-animated-white.gif" /></div>
-<div id="text" style="z-index:100; background-color:white; text-align:center; font-size:20px; width:300px; margin:0 auto; border-radius: 10px;"></div>
+<div id="text" style="z-index:100; background-color:white; text-align:center; font-size:20px; width:300px; margin:10px auto auto auto;"></div>
 <div id="music"></div>
-<div id="img_click"><img id="icon" src="images/on.png"></div>
+<div class="img_click"><img id="icon" src="images/on.png"></div>
 
 
 <div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
