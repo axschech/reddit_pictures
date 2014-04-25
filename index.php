@@ -24,19 +24,24 @@ Notes:
 <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
 <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css">
 
-<!-- Latest compiled and minified JavaScript -->
-<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
-<script src="https://www.gstatic.com/cv/js/sender/v1/cast_sender.js"></script>
-<script src="js/cast_support.js"></script>
+
 
 <script type="text/javascript">
 
 
-
+	var reciever_check;
 	var repeater;
 	var previous_subreddit='';
 	var pass;
+	var castOn=false;
+	var reciever_check;
+	var the_image;
+	var the_music;
+	var casting = false;
+	var session;
 
+	var height;
+	var width;
 
 	function setAudio(nope)
 	{
@@ -79,6 +84,7 @@ Notes:
 							url:new_link,
 							success: function(data) {
 								song = data.set.track.url;
+								the_music = song;
 								track_id = data.set.track.id;
 								var source = '<audio autoplay id="mus">';
 							    //source +=  '<source id="audio_player_ogv" src="' + new_audio + '.ogv"  type="audio/ogg" />';
@@ -130,10 +136,14 @@ Notes:
 			
 	}				
 					
-
+	
+		
 	$(document).ready(function()
 	{
-		
+		function returnCheck()
+		{
+			return reciever_check;
+		}
 
 		$(document).keyup(function(e)
 		{
@@ -203,7 +213,7 @@ Notes:
 		// 	}
 			
 		// });
-	    $('#img_click').click(function(){
+	    $('.img_click').click(function(){
 	    	if($('#icon').attr('src') == 'images/mute.png')
 	    	{
 	    		console.log('here');
@@ -225,8 +235,6 @@ Notes:
 	    	console.log($('#icon').attr('src'));
 	    });
 
-
-		$('#fullscreen').hide();
 		$('#hover').mouseover(function()
 		{
 			$('#fullscreen').show();
@@ -248,9 +256,189 @@ Notes:
 				$(this).html('Go fullscreen?');
 			}
 		});
+
+
+			function returnCheck()
+			{
+				var i=0;
+				if(reciever_check==undefined)
+				{
+					setTimeout(function() { returnCheck(); },20);
+
+				}
+				else if(i==25)
+				{
+					return false;
+				}
+				else
+				{
+					console.log('its done');
+					$('#cast').mouseover(function(){
+	 					$('#casticon').show();
+		 			});
+		 			$('#cast').mouseout(function(){
+		 				$('#casticon').hide();
+		 			});
+
+		 			$('#cast').click(function(){
+		 				if(castOn==false)
+		 				{
+		 					$('#casticon').attr('src','images/caston.png');
+		 					castOn = true;
+		 					launch();
+		 					function launch()
+		 					{
+		 						setTimeout(function(){
+		 							if(the_image!=undefined && the_music!=undefined)
+		 							{
+		 								console.log(the_image);
+		 								
+		 								chrome.cast.requestSession(onRequestSessionSuccess, onLaunchError);
+		 							}
+		 							else
+		 							{
+		 								launch();
+		 							}
+		 						},100);
+		 						
+		 					}
+		 					
+		 				}
+		 				else
+		 				{
+		 					$('#casticon').attr('src','images/casticon.on.png');
+		 					castOn = false;
+		 					if(casting)
+		 					{	
+		 						stopApp();
+		 					}
+		 					
+		 				}
+		 			});
+				}
+			}
+			
+			returnCheck();
+ 		
+
+	window['__onGCastApiAvailable'] = function(loaded, errorInfo) {
+	  if (loaded) {
+	    initializeCastApi();
+	  } else {
+	    console.log(errorInfo);
+	  }
+	}
+
+	initializeCastApi = function() {
+	  var sessionRequest = new chrome.cast.SessionRequest(chrome.cast.media.DEFAULT_MEDIA_RECEIVER_APP_ID);
+	
+	  var apiConfig = new chrome.cast.ApiConfig(sessionRequest,
+	    sessionListener,
+	    receiverListener); 
+	  chrome.cast.initialize(apiConfig, onInitSuccess, onError);
+	};
+
+	function sessionListener(e) {
+	  session = e;
+	  if (session.media.length != 0) {
+	    onMediaDiscovered('onRequestSessionSuccess', session.media[0]);
+	  }
+	}
+
+
+	/**
+ * receiver listener during initialization
+ */
+	function receiverListener(e) {
+	  if( e === 'available' ) {
+	    console.log("receiver found");
+	    reciever_check = true;
+	    //appendMessage("receiver found");
+	  }
+	  else {
+	    console.log("receiver list empty");
+	    //appendMessage("receiver list empty");
+	  }
+	}
+
+	function onInitSuccess() {
+	  //appendMessage("init success");
+	}
+
+	function onError() {
+	  console.log("error");
+	}
+
+	/**
+	 * generic success callback
+	 */
+	function onSuccess(message) {
+	  console.log(message);
+	}
+	
+
+	function onLaunchError(e)
+	{
+		console.log(e);
+	}
+	function stopApp() {
+	  session.stop(onSuccess, onError);
+	  casting=false;
+	}
+	function onRequestSessionSuccess(e) {
+
+      session = e;
+      if(the_music!=undefined && the_image!=undefined)
+      {
+      	 
+      	 	var mediaInfo = new chrome.cast.media.MediaInfo(the_music);
+      	 	 
+	      	 
+	      	mediaInfo.contentType='audio/mp3';
+
+	      	mediaInfo.metadata = new chrome.cast.media.MusicTrackMediaMetadata();
+      		mediaInfo.metadata.metadataType = chrome.cast.media.MetadataType.MUSIC_TRACK;
+
+	      	mediaInfo.metadata.images = [{'url': the_image,'width':1920,height:1080}];
+			var request = new chrome.cast.media.LoadRequest(mediaInfo);
+			session.loadMedia(request,
+			   onMediaDiscovered.bind(this, 'loadMedia'),
+			   onMediaError);
+      	 
+   //    	 if(the_music!=undefined)
+   //    	 {
+   //    	 	var mediaInfo2 = new chrome.cast.media.MediaInfo(the_music);
+	      	 
+	  //     	mediaInfo2.contentType='audio/mp3';
+			// var request2 = new chrome.cast.media.LoadRequest(mediaInfo2);
+			// session.loadMedia(request2,
+			//    onMediaDiscovered.bind(this, 'loadMedia'),
+			//    onMediaError);
+   //    	 }
+      	 
+		casting = true;
+      }
+      else
+      {
+      	console.log('no image');
+      }
+     
+ 	}
+
+	
+
+	function onMediaDiscovered(how, media) {
+	   currentMedia = media;
+	}
+
+	function onMediaError(e)
+	{
+		console.log(e);
+	}
+
+
+
 		
- 
-	});
 
 function reddit_test()
 {
@@ -391,6 +579,19 @@ function setImage(img,sub,t)
 			$('#text').html(t);
 			$('#text').fadeIn('slow');
 			setTimeout(function() { $('#text').fadeOut('slow'); }, 10000);
+			the_image = img;
+			height = h;
+			width = w;
+			if(casting)
+			{
+				var mediaInfo = new chrome.cast.media.MediaInfo(the_image);
+				var type= the_image.substr(the_image.length-3);
+				mediaInfo.contentType='image/'+type;
+				var request = new chrome.cast.media.LoadRequest(mediaInfo);
+				session.loadMedia(request,
+				   onMediaDiscovered.bind(this, 'loadMedia'),
+				   onMediaError);
+			}
 		}
 		else
 		{
@@ -428,6 +629,8 @@ function doWork()
  repeater = setTimeout(doWork, 60000);
 }
 
+	});
+
 </script>
 <style type="text/css">
 body
@@ -445,7 +648,6 @@ body
 
 .img_click
 {
-	padding:5px;
 	position:absolute;
 	top:10px;
 	right:10px;
@@ -461,7 +663,8 @@ body
 </style>
 </head>
 <body>
-<div id="hover" style="position:absolute;top:0;left:0;width:200px;height:200px;"><button id="fullscreen" class="btn btn-lg btn-primary" style="margin:15px">Go fullscreen?</button></div>
+<div id="hover" style="position:absolute;top:0;left:0;width:200px;height:200px;"><button id="fullscreen" class="btn btn-lg btn-primary" style="margin:15px;display:none">Go fullscreen?</button></div>
+<div id="cast" style="position:absolute;top:0;left:200;width:200px;height:200px" type="button"><img id="casticon" src="images/casticon.on.png" style="padding:10px;display:none" /></div>
 <img id="dat_img" />
 <div id="wait" style="text-align:center"><img src="http://pimphop.com/wp-content/uploads/please-wait-animated-white.gif" /></div>
 <div id="text" style="z-index:100; background-color:white; text-align:center; font-size:20px; width:300px; margin:10px auto auto auto;"></div>
@@ -469,7 +672,7 @@ body
 <div class="img_click"><img id="icon" src="images/on.png"></div>
 
 
-<div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+<div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
   <div class="modal-dialog modal-md">
     <div class="modal-content">
 	  	<div class="modal-header">
@@ -513,6 +716,10 @@ body
   <p>Also, move your mouse to the top left corner of the window to use "fullscreen mode"</p>
  <div title="This site uses LocalStorage to keep track of pictures that have been shown"> <input id="storage" type="checkbox"><a href="http://www.html5rocks.com/en/features/storage" target="_blank"> Clear <u>Local Storage?</u> </a></div>
 </div> -->
- 
+ <!-- Latest compiled and minified JavaScript -->
+
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
+<script src="https://www.gstatic.com/cv/js/sender/v1/cast_sender.js"></script>
+<!-- <script src="js/cast_support.js"></script> -->
 </body>
 </html>
