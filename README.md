@@ -1,3 +1,3 @@
 # Website
 
-http://axschech.info/reddit_test/
+http://axschech.com/reddit_test/
