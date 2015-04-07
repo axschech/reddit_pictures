@@ -104,7 +104,8 @@
             var link = "<a href='http://reddit.com/r/" + subreddit + "'>" + subreddit + "</a>";
             link += "<br /><small id='pic_title'></small>";
             $('body').css("background-image", "url('" + url + "')");
-            $('body').css("background-size", 'cover');
+            $('body').css("background-size", '100% auto');
+            $('body').css("background-repeat", "no-repeat");
             var html = '<a target="_blank" href="' + url + '">' + title + "</a>";
             $('#subreddit').html(link);
             $('#pic_title').html(html);
