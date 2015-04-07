@@ -17,10 +17,14 @@
             });
         }
     };
-    // Weather.get();
-    // Weather.promise.done(function (){
-    //  console.log(Weather.data);
-    // });
+    Weather.get();
+    Weather.promise.done(function (data) {
+        var temp, clouds;
+        temp = data.main.temp;
+        clouds = data.weather[0].description;
+        $('#temp').html(temp + ' F');
+        $('#clouds').html(clouds);
+    });
 
     Pictures = {
         Imgur: {
@@ -111,5 +115,5 @@
     Pictures.get();
     setInterval(function (){
         Pictures.get();
-    }, 10000);
+    }, 30000);
 }());
