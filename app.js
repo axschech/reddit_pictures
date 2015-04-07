@@ -14,6 +14,8 @@
 
             self.promise.done(function (data) {
                 self.data = data;
+            }).fail(function () {
+                self.get();
             });
         }
     };
@@ -39,16 +41,28 @@
             status: true,
             title: "",
             get: function () {
-                var self = this, image, domain, id, index, chosen, url, x = true;
+                var self = this,
+                    image,
+                    domain,
+                    index,
+                    chosen,
+                    subreddit,
+                    url;
                 index = Pictures.pick(Pictures.data.length);
                 chosen = Pictures.data[index];
                 if(chosen === undefined) {
                     self.get();
+                    return;
                 }
+                subreddit = chosen.data.subreddit;
                 image = chosen.data.url;
                 domain = chosen.data.domain;
                 self.title = chosen.data.title;
-                this.id = Pictures.parse(image, domain);
+                this.id = Pictures.parse(
+                    image,
+                    domain,
+                    subreddit
+                );
                 if(this.id === false) {
                     self.get();
                 }
@@ -65,11 +79,16 @@
                     self.image = data.data.link;
                     self.width = data.data.width;
                     self.height = data.data.height;
+                    console.log(self.width);
                     if(self.width<1920) {
                         self.get();
                     } else {
                         console.log(self.image);
-                        Pictures.setImage(self.image, self.title);
+                        Pictures.setImage(
+                            self.image,
+                            self.title,
+                            subreddit
+                        );
                     }
                 });
             }
@@ -77,13 +96,17 @@
         pick: function (length) {
             return Math.floor(Math.random() * length - 1);
         },
-        url: 'http://www.reddit.com/r/wallpaper+wallpapers+bigwallpapers/top.json?limit=100',
+        url: 'http://www.reddit.com/user/axschech/m/sfwporn/hot.json',
         data: {},
         promise: undefined,
-        setImage: function (url, title) {
+        subreddit: "",
+        setImage: function (url, title, subreddit) {
+            var link = "<a href='http://reddit.com/r/" + subreddit + "'>" + subreddit + "</a>";
+            link += "<br /><small id='pic_title'></small>";
             $('body').css("background-image", "url('" + url + "')");
-            $('body').css("background-image-size", 'cover');
+            $('body').css("background-size", 'cover');
             var html = '<a target="_blank" href="' + url + '">' + title + "</a>";
+            $('#subreddit').html(link);
             $('#pic_title').html(html);
         },
         parse: function (url, domain) {
