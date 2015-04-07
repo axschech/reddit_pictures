@@ -37,6 +37,7 @@
             check: false,
             image: "",
             status: true,
+            title: "",
             get: function () {
                 var self = this, image, domain, id, index, chosen, url, x = true;
                 index = Pictures.pick(Pictures.data.length);
@@ -46,6 +47,7 @@
                 }
                 image = chosen.data.url;
                 domain = chosen.data.domain;
+                self.title = chosen.data.title;
                 this.id = Pictures.parse(image, domain);
                 if(this.id === false) {
                     self.get();
@@ -67,7 +69,7 @@
                         self.get();
                     } else {
                         console.log(self.image);
-                        Pictures.setImage(self.image);
+                        Pictures.setImage(self.image, self.title);
                     }
                 });
             }
@@ -78,9 +80,11 @@
         url: 'http://www.reddit.com/r/wallpaper+wallpapers+bigwallpapers/top.json?limit=100',
         data: {},
         promise: undefined,
-        setImage: function (url) {
+        setImage: function (url, title) {
             $('body').css("background-image", "url('" + url + "')");
             $('body').css("background-image-size", 'cover');
+            var html = '<a target="_blank" href="' + url + '">' + title + "</a>";
+            $('#pic_title').html(html);
         },
         parse: function (url, domain) {
             var parser = document.createElement('a'),
