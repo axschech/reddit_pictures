@@ -16,6 +16,7 @@
                 self.data = data;
             }).fail(function () {
                 self.get();
+                return;
             });
         }
     };
@@ -65,6 +66,7 @@
                 );
                 if(this.id === false) {
                     self.get();
+                    return;
                 }
                 url = "https://api.imgur.com/3/image/" + this.id;
                 self.promise = $.ajax({
@@ -82,6 +84,7 @@
                     console.log(self.width);
                     if(self.width<1920) {
                         self.get();
+                        return;
                     } else {
                         console.log(self.image);
                         Pictures.setImage(
@@ -96,7 +99,7 @@
         pick: function (length) {
             return Math.floor(Math.random() * length - 1);
         },
-        url: 'http://www.reddit.com/user/axschech/m/sfwporn/hot.json',
+        url: 'http://www.reddit.com/user/axschech/m/sfwporn/hot.json?limit=1000',
         data: {},
         promise: undefined,
         subreddit: "",
