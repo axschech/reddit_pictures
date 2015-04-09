@@ -1,14 +1,73 @@
 (function () {
     'use strict';
-    var Weather, Pictures;
+    var Weather,
+        Pictures,
+        Geolocation,
+        Fullscreen;
+
+    Fullscreen = {
+        toggleFullScreen: function() {
+            if (!document.fullscreenElement &&    // alternative standard method
+                    !document.mozFullScreenElement &&
+                        !document.webkitFullscreenElement &&
+                            !document.msFullscreenElement ) {  // current working methods
+                if (document.documentElement.requestFullscreen) {
+                  document.documentElement.requestFullscreen();
+                } else if (document.documentElement.msRequestFullscreen) {
+                  document.documentElement.msRequestFullscreen();
+                } else if (document.documentElement.mozRequestFullScreen) {
+                  document.documentElement.mozRequestFullScreen();
+                } else if (document.documentElement.webkitRequestFullscreen) {
+                  document.documentElement.webkitRequestFullscreen();
+                }
+            } else {
+                if (document.exitFullscreen) {
+                  document.exitFullscreen();
+                } else if (document.msExitFullscreen) {
+                  document.msExitFullscreen();
+                } else if (document.mozCancelFullScreen) {
+                  document.mozCancelFullScreen();
+                } else if (document.webkitExitFullscreen) {
+                  document.webkitExitFullscreen();
+                }
+            }
+        },
+        clicked: function (e) {
+            // e.preventDefault();
+            this.toggleFullScreen();
+        }
+    };
+
+    Geolocation = {
+        promise: undefined,
+        position: undefined,
+        get: function () {
+            var deferred = $.Deferred();
+            navigator.geolocation.getCurrentPosition(deferred.resolve, deferred.reject);
+            this.promise = deferred;
+        }
+    };
+
     Weather = {
         url: 'http://api.openweathermap.org/data/2.5/weather?id=5128581&units=imperial',
         data: {},
         promise: undefined,
         get: function () {
-            var self = this;
+            var url,
+                coords,
+                self = this;
+            console.log(Geolocation.position);
+            if(Geolocation.position === undefined) {
+                url = self.url;
+            } else {
+                coords = Geolocation.position;
+                url = 'http://api.openweathermap.org/data/2.5/weather?units=imperial&';
+                url += 'lat=' + coords.latitude;
+                url += "&lon=" + coords.longitude;
+            }
+            console.log(url);
             self.promise = $.ajax({
-                url: self.url,
+                url: url,
                 method: 'GET'
             });
 
@@ -20,14 +79,6 @@
             });
         }
     };
-    Weather.get();
-    Weather.promise.done(function (data) {
-        var temp, clouds;
-        temp = data.main.temp;
-        clouds = data.weather[0].description;
-        $('#temp').html(temp + ' F');
-        $('#clouds').html(clouds);
-    });
 
     Pictures = {
         Imgur: {
@@ -94,12 +145,29 @@
                         );
                     }
                 });
+
+                self.promise.fail(function (data) {
+                    Pictures.get();
+                });
             }
         },
         pick: function (length) {
             return Math.floor(Math.random() * length - 1);
         },
-        url: 'http://www.reddit.com/user/axschech/m/sfwporn/hot.json?limit=1000',
+        current: undefined,
+        options: [
+            'new',
+            'new',
+            'new',
+            'top',
+            'hot'
+        ],
+        url: function () {
+            if (this.current === undefined) {
+                this.current = this.options[0];
+            }
+            return 'http://www.reddit.com/user/axschech/m/sfwporn/' + this.current + '.json?limit=1000';
+        },
         data: {},
         promise: undefined,
         subreddit: "",
@@ -107,8 +175,10 @@
             var link = "<a href='http://reddit.com/r/" + subreddit + "'>" + subreddit + "</a>";
             link += "<br /><small id='pic_title'></small>";
             $('body').css("background-image", "url('" + url + "')");
-            $('body').css("background-size", '100% auto');
+            $('body').css("background-size", 'cover');
             $('body').css("background-repeat", "no-repeat");
+            $('body').css('width','100%');
+            $('body').css('min-height', '100%');
             var html = '<a target="_blank" href="' + url + '">' + title + "</a>";
             $('#subreddit').html(link);
             $('#pic_title').html(html);
@@ -132,10 +202,16 @@
         get: function () {
             var self = this;
             self.promise = $.ajax({
-                url: self.url,
+                url: self.url(),
                 method: "GET"
             });
             self.promise.done(function (data) {
+                var index = self.options.indexOf(self.current);
+                if (index == self.options.length - 1) {
+                    self.current = self.options[0];
+                } else {
+                    self.current = self.options[index + 1];
+                }
                 self.data = data.data.children;
                 self.Imgur.get();
             });
@@ -143,6 +219,30 @@
             return self.promise;
         }
     };
+    $(document).ready(function () {
+        $('#fullscreen').on('click', function (e) {
+            // console.log('hey');
+            Fullscreen.clicked(e);
+            $(window).trigger('resize');
+        });
+    });
+
+    Geolocation.get();
+    Geolocation.promise.always(function (data) {
+        Geolocation.position = data.coords
+        Weather.get();
+        Weather.promise.done(function (data) {
+            var temp, clouds, place;
+            temp = data.main.temp;
+            place = data.name;
+            clouds = data.weather[0].description;
+            place = "<small>Weather in</small> " + data.name;
+            $('#temp').html(temp + ' F');
+            $('#place').html(place);
+            $('#clouds').html(clouds);
+        });
+    });
+
     Pictures.get();
     setInterval(function (){
         Pictures.get();

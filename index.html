@@ -8,6 +8,10 @@
     <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 	<script src="app.js"></script>
     <style type="text/css">
+        body, html {
+            width: 100%;
+            height: 100%;
+        }
         .title {
             opacity: .5;
             margin-top: 10%;
@@ -17,9 +21,12 @@
 <body>
     <div class="container">
         <div class="jumbotron text-center title">
+            <button type="button" id="fullscreen" class="btn btn-lg pull-left">
+                <span class="glyphicon glyphicon-fullscreen"></span>
+            </button>
             <h1><a href="http://github.com/axschech/reddit_pictures" target="_blank">Reddit Pictures</a></h1>
-            <h3 id="subreddit">Loading</h3>
-            <h2><small>Weather in</small> NYC</h2>
+            <h3 id="subreddit">Loading image...</h3>
+            <h2 id="place">Loading weather...</h2>
             <h3><span id="temp"></span></h3>
             <h3><span id="clouds"></span></h3>
             <div class="row">
