@@ -1,3 +1,18 @@
+
+//               __   ___ __    ___  _     __
+//   _______ ___/ /__/ (_) /_  / _ \(_)___/ /___ _________ ___
+//  / __/ -_) _  / _  / / __/ / ___/ / __/ __/ // / __/ -_|_-<
+// /_/  \__/\_,_/\_,_/_/\__/ /_/  /_/\__/\__/\_,_/_/  \__/___/
+
+/**
+ *  @description Loads images from reddit and gets weather from OpenWeatherMap
+ *  @author  Alex Schechter
+ *  @version 0.1
+ *  Notes:
+ *  Pictures.get() -> Pictures.Imgur.get() -> Pictures.setImage();
+ *  Load reddit data -> check picture from Imgur -> set image source
+ */
+
 (function () {
     'use strict';
     var Weather,
