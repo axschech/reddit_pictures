@@ -6,6 +6,7 @@
     <link rel="stylesheet" type="text/css" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
 	<script src="bower_components/jquery/dist/jquery.min.js"></script>
     <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="bower_components/moment/min/moment.min.js"></script>
 	<script src="app.js"></script>
     <style type="text/css">
         body, html {
@@ -21,10 +22,13 @@
 <body>
     <div class="container">
         <div class="jumbotron text-center title">
-            <button type="button" id="fullscreen" class="btn btn-lg pull-left">
-                <span class="glyphicon glyphicon-fullscreen"></span>
-            </button>
+            <div class="row">
+                <button type="button" id="fullscreen" class="btn btn-lg pull-left">
+                    <span class="glyphicon glyphicon-fullscreen"></span>
+                </button>
+            </div>
             <h1><a href="http://github.com/axschech/reddit_pictures" target="_blank">Reddit Pictures</a></h1>
+            <h1 class="visible-lg"><small id="time">Loading time...</small></h1>
             <h3 id="subreddit">Loading image...</h3>
             <h2 id="place">Loading weather...</h2>
             <h3><span id="temp"></span></h3>

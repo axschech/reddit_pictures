@@ -18,7 +18,8 @@
     var Weather,
         Pictures,
         Geolocation,
-        Fullscreen;
+        Fullscreen,
+        Time;
 
     Fullscreen = {
         toggleFullScreen: function() {
@@ -244,7 +245,7 @@
 
     Geolocation.get();
     Geolocation.promise.always(function (data) {
-        Geolocation.position = data.coords
+        Geolocation.position = data.coords;
         Weather.get();
         Weather.promise.done(function (data) {
             var temp, clouds, place;
@@ -255,11 +256,26 @@
             $('#temp').html(temp + ' F');
             $('#place').html(place);
             $('#clouds').html(clouds);
+            Time.setTime();
+            setInterval(function () {
+                Time.setTime();
+            },1000);
         });
     });
 
+    Time = {
+        time: "",
+        get: function () {
+            this.time = moment().format('MMMM Do, hh:mm:ss').toString();
+            return this.time;
+        },
+        setTime: function (time) {
+           document.getElementById('time').innerHTML = this.get();
+        }
+    };
+
     Pictures.get();
-    setInterval(function (){
+    setInterval(function () {
         Pictures.get();
     }, 30000);
 }());
