@@ -256,10 +256,6 @@
             $('#temp').html(temp + ' F');
             $('#place').html(place);
             $('#clouds').html(clouds);
-            Time.setTime();
-            setInterval(function () {
-                Time.setTime();
-            },1000);
         });
     });
 
@@ -273,9 +269,14 @@
            document.getElementById('time').innerHTML = this.get();
         }
     };
-
     Pictures.get();
     setInterval(function () {
         Pictures.get();
     }, 30000);
+    window.onload = function () {
+        Time.setTime();
+        setInterval(function () {
+            Time.setTime();
+        },1000);
+    };
 }());
