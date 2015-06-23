@@ -17,6 +17,10 @@
             opacity: .5;
             margin-top: 10%;
         }
+        #innerTime {
+            font-weight: lighter;
+            font-size: 120px;
+        }
     </style>
 </head>
 <body>
@@ -27,8 +31,7 @@
                     <span class="glyphicon glyphicon-fullscreen"></span>
                 </button>
             </div>
-            <h1><a href="http://github.com/axschech/reddit_pictures" target="_blank">Reddit Pictures</a></h1>
-            <h1 class="visible-lg"><small id="time">Loading time...</small></h1>
+            <h1><span id="time">Loading time...</span></h1>
             <h3 id="subreddit">Loading image...</h3>
             <h2 id="place">Loading weather...</h2>
             <h3><span id="temp"></span></h3>
@@ -54,10 +57,16 @@
                     </ul>
                 </div>
             </div>
-            <div class="pull-right">
-                <a href="http://axschech.com">
-                    @axschech
-                </a>
+            <div class="row">
+                <div class="pull-left">
+                    <a href="http://github.com/axschech/reddit_pictures" target="_blank">Reddit Pictures</a>
+                </div>
+                <div class="pull-right">
+                    <a href="http://axschech.com">
+                        @axschech
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 </body>

@@ -262,8 +262,13 @@
     Time = {
         time: "",
         get: function () {
-            this.time = moment().format('MMMM Do, hh:mm:ss').toString();
-            return this.time;
+            this.date = moment().format('MMMM Do').toString();
+            this.time = moment().format('h:mm:ss').toString();
+            var str = '<small>' + this.date;
+            str += '</small><br />';
+            str +=  '<span id="innerTime">' + this.time;
+            str += '</span>';
+            return str;
         },
         setTime: function (time) {
            document.getElementById('time').innerHTML = this.get();
