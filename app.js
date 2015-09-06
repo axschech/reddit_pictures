@@ -190,7 +190,12 @@
         setImage: function (url, title, subreddit) {
             var link = "<a href='http://reddit.com/r/" + subreddit + "'>" + subreddit + "</a>";
             link += "<br /><small id='pic_title'></small>";
-            $('#image').attr('src', url);
+            $('body').css("background-image", "url('" + url + "')");
+            $('body').css("background-size", 'cover');
+            $('body').css("background-repeat", "no-repeat");
+            $('body').css('width','100%');
+            $('body').css('min-height', '100%');
+            var html = '<a target="_blank" href="' + url + '">' + title + "</a>";
             $('#subreddit').html(link);
             $('#pic_title').html(html);
         },
