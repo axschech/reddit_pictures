@@ -19,7 +19,8 @@
         Pictures,
         Geolocation,
         Fullscreen,
-        Time;
+        Time,
+        Slider;
 
     Fullscreen = {
         toggleFullScreen: function() {
@@ -274,11 +275,25 @@
            document.getElementById('time').innerHTML = this.get();
         }
     };
+
+    Slider = {
+        init: function () {
+
+            var slider = $('#slider').slider(),
+                num;
+            slider.on('change', function (e) {
+                num = e.value.newValue * 0.1;
+                $('.title').css('opacity', num);
+            });
+        }
+    };
+
     Pictures.get();
     setInterval(function () {
         Pictures.get();
     }, 30000);
     window.onload = function () {
+        Slider.init();
         Time.setTime();
         setInterval(function () {
             Time.setTime();
