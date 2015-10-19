@@ -66,6 +66,7 @@
     };
 
     Weather = {
+        key: 'be3314462f912526b724ebcabc78e543',
         url: 'http://api.openweathermap.org/data/2.5/weather?id=5128581&units=imperial',
         data: {},
         promise: undefined,
@@ -79,9 +80,10 @@
             } else {
                 coords = Geolocation.position;
                 url = 'http://api.openweathermap.org/data/2.5/weather?units=imperial&';
-                url += 'lat=' + coords.latitude;
-                url += "&lon=" + coords.longitude;
+                url += 'lat=' + Math.round(coords.latitude * 1000) / 1000;
+                url += "&lon=" + Math.round(coords.longitude * 1000) / 1000;
             }
+            url += "&APPID=" + Weather.key;
             console.log(url);
             self.promise = $.ajax({
                 url: url,
@@ -249,6 +251,7 @@
         Geolocation.position = data.coords;
         Weather.get();
         Weather.promise.done(function (data) {
+            console.log(data);
             var temp, clouds, place;
             temp = data.main.temp;
             place = data.name;
