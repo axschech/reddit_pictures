@@ -256,7 +256,7 @@
             temp = data.main.temp;
             place = data.name;
             clouds = data.weather[0].description;
-            place = "<small>Weather in</small> " + data.name;
+            place = "<small>weather in</small> " + data.name;
             $('#temp').html(temp + ' F');
             $('#place').html(place);
             $('#clouds').html(clouds);
